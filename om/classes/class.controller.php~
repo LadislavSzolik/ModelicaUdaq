@@ -1,0 +1,277 @@
+<?php
+	include_once("/var/www/dp2/config.php");
+	
+//ked type je 0 - default
+//			  1 - vlastny
+class Controller {
+	var $id = "";
+	var $name = "";
+	var $parameter = "";
+	var $variable = "";
+	var $equation = "";	
+	var $fun = "";
+	var $led = "";
+	var $sample = "";
+	var $datum = "";
+	var $login = "";
+	var $activ = "";
+	var $type = "";
+	var $par_arr_js = "";
+	var $par_arr = array();
+	var $var_arr_js = "";
+	var $var_arr = array();
+	var $timeLimit = "";
+	public $cont_string = "";
+
+	function Controller() {
+		global $db_options;
+		dibi::connect($db_options);
+	}
+
+	function addController($contArr) {
+		$inArr = array();
+
+		foreach ($contArr as $d => $data) {
+			$inArr[$d] =  mysql_real_escape_string($data);
+		}
+		dibi::query('INSERT INTO `controllers` ', $inArr);
+		$this->id = dibi::getInsertId();
+		$this->name = $contArr["name"];
+		$this->parameter = $contArr["parameter"];
+		$this->variable = $contArr["variable"];
+		$this->equation = $contArr["equation"];
+		$this->fun = $contArr["fun"];
+		$this->led = $contArr["led"];
+		$this->sample = $contArr["sample"];
+		//$this->datum = $contArr["datum"];
+		$this->login = $contArr["login"];
+		$this->activ = $contArr["activ"];
+		$this->type = $contArr["type"];		
+		$this->timeLimit = $contArr["timeLimit"];
+		$this->generateArrs();
+		$this->generateCont();
+	}
+	
+	function deleteController() {
+		dibi::query('DELETE FROM `controllers` WHERE id=%i',$this->id);
+	}
+
+	function deleteControllerByUser() {
+		dibi::query("UPDATE `controllers` SET", array('activ' => '0')," WHERE id=%i",$this->id);
+		$this->activ = '0';
+	}
+
+	function getControllerById($id) {
+		if (strcmp($id,"-2")==0) return -2;
+		$result = dibi::query('SELECT * FROM `controllers` WHERE id=%i',$id);
+		$value = $result->fetchAll();
+		if(!$value){
+			return -1;
+		}else{
+			$this->id = $value[0]["id"];
+			$this->name = $value[0]["name"];
+			$this->parameter = $value[0]["parameter"];
+			$this->variable = $value[0]["variable"];
+			$this->equation = str_replace('\n',"\n",$value[0]["equation"]);
+			$this->fun = $value[0]["fun"];
+			$this->led = $value[0]["led"];
+			$this->sample = $value[0]["sample"];
+			$this->datum = $value[0]["datum"];
+			$this->login = $value[0]["login"];
+			$this->activ = $value[0]["activ"];
+			$this->type = $value[0]["type"];			
+			$this->timeLimit = $value[0]["timeLimit"];
+			$this->generateArrs();
+			$this->generateCont();
+			return 0;
+		}
+	}
+	function getDefaultController() {
+		$result = dibi::query('SELECT * FROM `defaultController` WHERE id=1');
+		$value = $result->fetchAll();
+		if(!$value){
+			return -1;
+		}else{
+			$this->id = $value[0]["id"];
+			$this->name = $value[0]["name"];
+			$this->parameter = $value[0]["parameter"];
+			$this->variable = $value[0]["variable"];
+			$this->equation = str_replace('\n',"\n",$value[0]["equation"]);
+			$this->fun = $value[0]["fun"];
+			$this->led = $value[0]["led"];
+			$this->sample = $value[0]["sample"];
+			$this->datum = $value[0]["datum"];
+			$this->login = $value[0]["login"];
+			$this->activ = $value[0]["activ"];
+			$this->type = $value[0]["type"];			
+			$this->timeLimit = $value[0]["timeLimit"];
+			$this->generateArrs();
+			$this->generateCont();
+			return 0;
+		}
+	}
+
+
+	function getControllerByName($name) {
+		$result = dibi::query('SELECT * FROM `controllers` WHERE name=%i',$name);
+		$value = $result->fetchAll();
+		if(!$value){
+			return -1;
+		}else{
+			$this->id = $value[0]["id"];
+			$this->name = $value[0]["name"];
+			$this->parameter = $value[0]["parameter"];
+			$this->variable = $value[0]["variable"];
+			$this->equation = str_replace('\n',"\n",$value[0]["equation"]);
+			$this->fun = $value[0]["fun"];
+			$this->led = $value[0]["led"];
+			$this->sample = $value[0]["sample"];
+			$this->datum = $value[0]["datum"];
+			$this->login = $value[0]["login"];
+			$this->activ = $value[0]["activ"];
+			$this->type = $value[0]["type"];			
+			$this->timeLimit = $value[0]["timeLimit"];
+			$this->generateArrs();
+			$this->generateCont();
+			return 0;
+		}
+	}
+
+	function updateController($contArr) {
+		$inArr = array();
+		foreach ($contArr as $d => $data) {
+			$inArr[$d] =  mysql_real_escape_string($data);
+		}
+		dibi::query("UPDATE `controllers` SET ",$inArr ," WHERE id=%i",$this->id);
+	}
+	function setController($contArr) {
+		$this->id =  isset($contArr["id"]) ? $contArr["id"] : $this->id;
+ 		$this->name = isset($contArr["name"]) ? $contArr["name"] : $this->name;
+ 		$this->parameter = isset($contArr["parameter"]) ? $contArr["parameter"] : $this->parameter;
+		$this->variable = isset($contArr["variable"]) ? $contArr["variable"] : $this->variable;
+		$this->equation = isset($contArr["equation"]) ? $contArr["equation"] : $this->equation;
+		$this->fun = isset($contArr["fun"]) ? $contArr["fun"]  :$this->fun;
+		$this->led = isset($contArr["led"]) ? $contArr["led"] : $this->led;
+		$this->sample = isset($contArr["sample"]) ? $contArr["sample"] :$this->sample;
+		$this->datum = isset($contArr["datum"]) ? $contArr["datum"] : $this->datum;
+		$this->timeLimit = isset($contArr["timeLimit"]) ? $contArr["timeLimit"] : $this->timeLimit;
+		$this->login = isset($contArr["login"]) ? $contArr["login"] : $this->login;
+		$this->activ = isset($contArr["activ"]) ? $contArr["activ"] : $this->activ;
+		$this->type = isset($contArr["type"]) ? $contArr["type"] : $this->type;
+		$this->cont_string = isset($contArr["cont_string"]) ? $contArr["cont_string"] : $this->cont_string;
+		$this->generateArrs();
+		
+	}
+	function generateArrs() {
+		$par_js_t = array();
+		$var_js_t = array();
+		$this->par_arr = array();
+		$this->par_arr = array();
+
+		$pars = split(";",$this->parameter);
+		for($i=0;$i<sizeof($pars);$i++){
+			$parsT = split('-',$pars[$i]);
+			if(sizeof($parsT)==3){
+				$par_js_t[] = $i+1; 
+				$this->par_arr[] = array('parT'.($i+1),$parsT[0],'parN'.($i+1),$parsT[1],'parV'.($i+1),$parsT[2]);
+			}
+		}
+				
+		$vars = split(";",$this->variable);
+		for($i=0;$i<sizeof($vars);$i++){
+			$varsT = split('-',$vars[$i]);
+			if(sizeof($varsT)==2){
+				$var_js_t[] = $i+1;
+				$this->var_arr[] = array('varT'.($i+1),$varsT[0],'varN'.($i+1),$varsT[1]);
+			}
+		}
+		$this->par_arr_js = implode(",",$par_js_t);
+		$this->var_arr_js = implode(",",$var_js_t);
+	}
+
+	function generateCont() {
+		$this->cont_string .= "model ".$this->name."\n";
+		$pars = split(";",$this->parameter);
+		for($k=0;$k<sizeof($pars);$k++){
+			$parsT = split('-',$pars[$k]);
+			if(sizeof($parsT)==3){
+				$this->cont_string .= "parameter ".$parsT[0]." ".$parsT[1]." = ".$parsT[2].";\n";
+			}
+		}						
+		$vars = split(";",$this->variable);
+		for($m=0;$m<sizeof($vars);$m++){
+			$varsT = split('-',$vars[$m]);
+			if(sizeof($varsT)==2){
+				$this->cont_string .= $varsT[0]." ".$varsT[1].";\n";
+			}
+		}
+		$this->cont_string .= "\nequation\n";
+		$this->cont_string .=  str_replace('\n',"\n",$this->equation);
+		$this->cont_string .= "\nend ".$this->name.";";
+	}
+}
+
+function getAllControllerByType($type) {
+	global $db_options;
+	dibi::connect($db_options);
+	$result = dibi::query('SELECT * FROM `controllers` WHERE type=%i ORDER BY  `controllers`.`id`',$type);
+	$value = $result->fetchAll();
+	$controllers = array();
+	
+	if(!$value){
+		return -1;
+	}else{
+		foreach($result as $n => $row){
+			$tmp = new Controller();
+			$tmp->id = $row["id"];
+			$tmp->name = $row["name"];
+			$tmp->parameter = $row["parameter"];
+			$tmp->variable = $row["variable"];
+			$tmp->equation = str_replace('\n',"\n",$row["equation"]);
+			$tmp->fun = $row["fun"];
+			$tmp->led = $row["led"];
+			$tmp->sample = $row["sample"];
+			$tmp->datum = $row["datum"];
+			$tmp->login = $row["login"];
+			$tmp->activ = $row["activ"];
+			$tmp->type = $row["type"];			
+			$tmp->timeLimit = $row["timeLimit"];
+			$tmp->generateArrs();
+			array_push($controllers, $tmp);
+		}
+		return $controllers;
+	}
+}
+
+function getAllControllerByUser($login) {
+	global $db_options;
+	dibi::connect($db_options);
+	$result = dibi::query('SELECT * FROM `controllers` WHERE login=%s AND activ=1 ORDER BY  `controllers`.`id`',$login);
+	$value = $result->fetchAll();
+	$controllers = array();
+	
+	if(!$value){
+		return -1;
+	}else{
+		foreach($result as $n => $row){
+			$tmp = new Controller();
+			$tmp->id = $row["id"];
+			$tmp->name = $row["name"];
+			$tmp->parameter = $row["parameter"];
+			$tmp->variable = $row["variable"];
+			$tmp->equation = str_replace('\n',"\n",$row["equation"]);
+			$tmp->fun = $row["fun"];
+			$tmp->led = $row["led"];
+			$tmp->sample = $row["sample"];
+			$tmp->datum = $row["datum"];
+			$tmp->login = $row["login"];
+			$tmp->activ = $row["activ"];
+			$tmp->type = $row["type"];			
+			$tmp->timeLimit = $row["timeLimit"];
+			$tmp->generateArrs();
+			array_push($controllers, $tmp);
+		}
+		return $controllers;
+	}
+}
+?>

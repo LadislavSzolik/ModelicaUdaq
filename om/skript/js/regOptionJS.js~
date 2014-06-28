@@ -1,0 +1,61 @@
+$(document).ready(function(){
+	$('.predvolba').click(function(){
+		if($('.RegOptTable').length != 0) {
+			$('.regOptionsForm').submit();
+			 window.opener.location.reload(true);
+			self.close();
+		}else{
+			window.location.href = "index.php?page=2&addNew=true";
+		}
+	});
+	var aktualList = new Array();
+/*********** arrayGenerator ***********/
+	function arrayGenerator(arrHolder) {
+		arrHolder = arrHolder.split(",");
+		var resultArr = new Array();
+		if(arrHolder.length > 1) {
+			for(i=0;i<arrHolder.length;i++)
+			{
+				resultArr.push(arrHolder[i]);
+			}
+		}else if(arrHolder.length == 0){
+			resultArr = new Array();
+		}else {
+			resultArr = arrHolder;
+		}
+		return resultArr;
+	}
+/*********** listGenerator ***********/
+	function listGenerator() {
+		$('.regList').empty();
+		var aktualName = $('.AktualName').val();
+		var selectedOption = '';
+		if( $('.typReg1').attr("checked")) {
+			aktualList = arrayGenerator($('.DefRegNames').val());
+		}else {
+			aktualList = arrayGenerator($('.SavedRegNames').val());
+		}
+		
+		if(!$('.SavedRegNames').val()) {
+			$('.typReg2').attr("disabled", "disabled");
+		}
+		for(i=0;i<aktualList.length;i++) {
+			if(aktualName == aktualList[i])
+				selectedOption = 'selected';
+			else
+				selectedOption = '';
+			$('.regList').append('<option value=\''+aktualList[i]+'\' '+selectedOption+' >'+aktualList[i]+'</option>');
+		}
+	
+	}
+/*********** main ***********/
+	if($('.DefRegNames').val()) {
+		listGenerator();
+		$('.typReg1').click(function(){
+			listGenerator();	
+		});
+		$('.typReg2').click(function(){
+			listGenerator();
+		});
+	}
+});

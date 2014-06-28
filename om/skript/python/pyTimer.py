@@ -1,0 +1,21 @@
+#!/usr/bin/python
+# coding=UTF-8
+
+import os,signal, sys, psutil,time
+import cgitb; cgitb.enable()
+import vFunk
+
+print "Content-type: text/html\n"
+
+
+if sys.argv[1]:
+	print "sys argv "+sys.argv[1]
+	
+	time.sleep(int(sys.argv[1])-1)
+print "pokracovanie"
+#PID = vFunk.najdiProc("python","multi_server.py")
+#if PID is 0:
+#  sys.exit(-1)
+
+#os.kill(PID, signal.SIGHUP)
+sys.exit(0)

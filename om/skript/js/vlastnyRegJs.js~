@@ -1,0 +1,244 @@
+$(document).ready(function(){ 
+	var aktualPar = new Array();
+	var aktualVar = new Array();
+
+	var defParVal = new Array("2.5", "0.714", "0.01", "30");
+	var defParNa = new Array("K", "Ti", "Td", "Ref");
+	
+	
+	var defVarNa = new Array("cIn","cOut", "error", "x", "y");
+	
+	var typParamTxt = "<select class=\"TypParam\">"+
+			  "<option value=\"Real\" selected=\"selected\">Real</option>"+
+			   "<option value=\"Integer\">Integer</option>"+
+			    "<option value=\"String\">String</option>"+
+			     "<option value=\"Boolean\">Boolean</option>"+
+			"</select>";
+	var disable = '';
+	var vymText = '';
+
+	function vytvorDefaultVarPar() {
+		for(i=0;i<defParVal.length;i++)
+		{
+			aktualPar.push(i+1);
+			var aktP = aktualPar[aktualPar.length-1];
+			$('<tr class=\"p'+(aktP).toString()+'\" align=\"left\"><td class=\"parTypTd'+(aktP).toString()+'\">'+
+			  typParamTxt+'</td>'+
+'<td><input name=\"parN'+(aktP).toString()+'\" class=\"parN'+(aktP).toString()+'\" size=\"5\" type=\"text\"  value=\"'+defParNa[i]+'\" /></td>'+
+'<td><input name=\"parV'+(aktP).toString()+'\" class=\"parV'+(aktP).toString()+'\" size=\"5\" type=\"text\" value=\"'+defParVal[i]+'\" /></td><td>'+
+'<input class=\"vymazp'+(aktP).toString()+'\" type=\"button\" value=\"Vymaž\" alt=\"'+(aktP).toString()+'\"/></td></tr>').insertAfter('.p'+(aktP-1).toString()); 
+
+			$('.parV'+(aktP).toString()).keyup(function() {
+				vygenerujModel();
+			});
+			$('.parN'+(aktP).toString()).keyup(function() {
+				vygenerujModel();
+			});
+			$('.pTd'+(aktP).toString()+' > .TypParam').change(function(){
+				vygenerujModel();
+			  
+			});
+			$('.vymazp'+(aktP).toString()).click(function(){	
+				$('.p'+$(this).attr('alt')).remove();
+				for(i=0;i<aktualPar.length;i++)
+				{
+					if(aktualPar[i] == parseInt($(this).attr('alt')))
+					{
+						aktualPar.splice(i,1);
+					}
+				}
+				vygenerujModel();
+			});
+		}
+		for(i=0;i<defVarNa.length;i++)
+		{
+			aktualVar.push(i+1);
+			var option = '';
+			var medzery = '';
+			var aktV = aktualVar[aktualVar.length-1];
+			if(i == 0 || i == 1) {
+				if(i == 0) 
+				  option = 'Temperature';
+				else {
+				  option = 'Intensity';
+				}
+				
+				$('<tr class=\"v'+(aktV)+'\" align=\"left\" ><td class=\"varTypTd'+(aktV)+'\">'+
+'<select class=\"TypParam\"><option value=\"'+option+'\" selected=\"selected\">'+option+'</option></select></td>'+
+'<td><input disabled="disabled" class=\"varN'+(aktV)+'\" type=\"text\" size=5 value=\"'+defVarNa[i]+'\"/></td>'+	
+				'</tr>').insertAfter('.v'+(aktV-1).toString()); 
+			}else{
+				
+				$('<tr class=\"v'+(aktV)+'\" align=\"left\"  ><td class=\"varTypTd'+(aktV)+'\">'+
+				typParamTxt+'</td>'+
+				'<td><input  class = \"varN'+(aktV).toString()+'\" type=\"text\" size=\"5\" value=\"'+defVarNa[i]+'\" /></td>'+
+'<td><input class=\"vymaz'+(aktV).toString()+'\" type=\"button\" value=\"Vymaž\" alt=\"'+(aktV).toString()+'\"/></td>'+
+				'</tr>').insertAfter('.v'+(aktV-1).toString()); 
+				$('.varN'+(aktV).toString()).keyup(function() {
+					vygenerujModel();
+				});	
+				$('.vTd'+(aktV).toString()+' > .TypParam').change(function(){
+				vygenerujModel();			  
+				});
+				$('.vymaz'+(aktV).toString()).click(function(){	
+					$('.v'+$(this).attr('alt')).remove();
+					for(i=0;i<aktualVar.length;i++)
+					{
+						if(aktualVar[i] == parseInt($(this).attr('alt')))
+						{
+							aktualVar.splice(i,1);
+						}
+					}
+					vygenerujModel();
+				});
+			}
+			
+		}
+	}
+
+	vytvorDefaultVarPar();
+	
+	$('.rovnice').keyup(function() {
+		vygenerujModel();
+	});
+	
+	$('.predvolba').click(function() {
+	 // window.location.reload();
+	 //$("#wait_loading").css("display","block");	 
+	  for(i=0;i<aktualPar.length;i++) {
+	      $('.p'+aktualPar[i]).remove();
+	  }
+	  for(i=0;i<aktualVar.length;i++) {
+	      $('.v'+aktualVar[i]).remove();
+	  }
+	  
+	  aktualVar = new Array();
+	  aktualPar = new Array();
+	  $('.rovnice').val("error = Ref - cIn.value;\nder(x) = error/Ti;\ny = Td*der(error);\ncOut.value = K*(error +x +y);");
+	  vytvorDefaultVarPar();
+	  vygenerujModel();
+	});
+	$('.spustitE').click(function()
+	{		
+		var dataT = '';
+			dataT = 'vlast = true';
+			dataT += '&aktualPar='+encodeURIComponent(aktualPar);
+			dataT += '&sampleV='+encodeURIComponent($("#sampleV").val()); 
+			dataT += '&ledV='+encodeURIComponent($("#ledV").val());
+			dataT += '&funV='+encodeURIComponent($("#funV").val());
+			dataT += '&nazovReg='+encodeURIComponent($("#nazovReg").val());
+			dataT += '&regulator='+encodeURIComponent($("#vytvorReg").val());			
+			for(i=0;i<aktualPar.length;i++)
+			{
+				dataT += '&par'+aktualPar[i]+'='+encodeURIComponent($(".parN"+aktualPar[i]).val())+'='+encodeURIComponent($(".parV"+aktualPar[i]).val());				
+			}				
+		$.ajax({
+					type: "POST",
+					url: "experiment.php",		
+					data: dataT,	
+					success: 
+						function(html){
+						$(".center-content").html(html);
+						}
+		});		
+		
+	});
+
+	$('.nazovReg').keyup(function(){
+		vygenerujModel();
+	});
+	$('.pridatPar').click(function(){
+		if(aktualPar.length <1 ){
+		  aktualPar.push(1);
+		}else{
+		  aktualPar.push(aktualPar[aktualPar.length -1]+1);
+		}
+		var aktP = aktualPar[aktualPar.length-1];
+		
+		$('<tr class=\"p'+(aktP).toString()+'\" align=\"left\"><td class=\"parTypTd'+(aktP).toString()+'\">'+
+		typParamTxt+'</td>'+
+	'<td><input name=\"parN'+(aktP)+'\" class = \"parN'+(aktP)+'\" type=\"text\" size=5 value=\"\" /></td>'+
+	'<td><input name=\"parV'+(aktP)+'\"  class=\"parV'+(aktP)+'\" type=\"text\" size=5 value=\"\" /></td>'+
+'<td><input class=\"vymazp'+(aktP).toString()+'\" type=\"button\" value=\"Vymaž\" alt=\"'+(aktP).toString()+'\"/></td></tr>').insertAfter('.p'+(aktP-1).toString()); 
+		$('.parV'+(aktP).toString()).keyup(function() {
+				vygenerujModel();
+		});
+		$('.parN'+(aktP).toString()).keyup(function() {
+				vygenerujModel();
+		});
+		$('.parTypTd'+(aktP).toString()+' > .TypParam').change(function(){
+				vygenerujModel();  
+		});
+			
+		$('.vymazp'+(aktP).toString()).click(function(){
+			$('.p'+$(this).attr('alt')).remove();
+			for(i=0;i<aktualPar.length;i++)
+			{
+				if(aktualPar[i] == parseInt($(this).attr('alt')))
+				{
+					aktualPar.splice(i,1);
+				}
+			}
+			vygenerujModel();
+		});	
+	});
+
+	$('.pridatPre').click(function(){
+		aktualVar.push(aktualVar[aktualVar.length -1]+1);
+		var aktV = aktualVar[aktualVar.length-1];
+		$('<tr class=\"v'+(aktV).toString()+'\" align=\"left\"><td class=\"varTypTd'+(aktV).toString()+'\">'+
+		  typParamTxt+'</td>'+
+'<td><input  class = \"varN'+(aktV).toString()+'\" type=\"text\" size=5 value=\"\" /></td>'+
+'<td><input class=\"vymaz'+(aktV).toString()+'\" type=\"button\" value=\"Vymaž\" alt=\"'+(aktV).toString()+'\"/></td></tr>').insertAfter('.v'+(aktV-1).toString());
+
+		$('.varN'+(aktV).toString()).keyup(function() {
+			vygenerujModel();
+		});	
+		$('.varTypTd'+(aktV).toString()+' > .TypParam').change(function(){
+			vygenerujModel();			  
+		});	
+		$('.vymaz'+(aktV).toString()).click(function(){
+			$('.v'+$(this).attr('alt')).remove();
+			for(i=0;i<aktualVar.length;i++)
+			{
+				if(aktualVar[i] == parseInt($(this).attr('alt')))
+				{
+					aktualVar.splice(i,1);
+				}
+			}
+			vygenerujModel();
+		});
+			
+	});
+
+	function vygenerujModel() 
+	{
+		var regContent = "";
+		var parametre = "";
+		var premenne = "";
+		var pocRiadkov = 0;
+		for(i=0;i<aktualPar.length;i++)
+		{
+			if($('.p'+aktualPar[i]).length) {
+				parametre += "parameter "+$('.parTypTd'+aktualPar[i]+' > .TypParam option:selected').val()+" "+$('.parN'+aktualPar[i]).val()+" = "+$('.parV'+aktualPar[i]).val()+";\n";	
+				pocRiadkov++;			
+			}else{
+				break;
+			}
+		}
+		for(i=0;i<aktualVar.length;i++)
+		{
+			if($('.v'+aktualVar[i]).length) {
+				premenne += $('.varTypTd'+aktualVar[i]+' > .TypParam option:selected').val() +" "+$('.varN'+aktualVar[i]).val()+";\n";			
+				pocRiadkov++;			
+			}
+		}		
+		pocRiadkov +=$('.rovnice').attr('rows');	
+		regContent = "model "+$('.nazovReg').val() +"\n"+parametre	+premenne+"\nequation\n"+$('.rovnice').val()+"\nend "+$('.nazovReg').val()+";";
+		$('.vytvorReg').val(regContent);	
+		$('.vytvorReg').attr('rows',pocRiadkov);		
+		$('.par_arr').val(aktualPar);
+		$('.var_arr').val(aktualVar);
+	}
+	vygenerujModel();
+});

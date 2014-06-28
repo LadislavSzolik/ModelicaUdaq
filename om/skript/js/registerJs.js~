@@ -1,0 +1,28 @@
+$(document).ready(function(){ 
+   $.ajax({
+	type: "POST",
+	url: "defaultReg.php",		
+	data: "poslane=true"+
+	      "&meno="+encodeURIComponent($(".meno").val())+
+	      "&priezvisko="+encodeURIComponent($(".priezvisko").val())+
+	      "&email="+encodeURIComponent($(".email").val())+
+	      "&pouMeno="+encodeURIComponent($(".pouMeno").val())+
+	      "&heslo1="+encodeURIComponent($(".heslo1").val())+
+	      "&heslo2="+encodeURIComponent($(".heslo2").val()),	
+	success: function(html){$(".zvolenyReg").html(html);}       
+  });
+  $('.zaRegistrBtn').click(function() {    
+     $.ajax({
+	type: "POST",
+	url: "registerPage.php",		
+	data: "poslane=true"+
+	      "&meno="+encodeURIComponent($(".meno").val())+
+	      "&priezvisko="+encodeURIComponent($(".priezvisko").val())+
+	      "&email="+encodeURIComponent($(".email").val())+
+	      "&pouMeno="+encodeURIComponent($(".pouMeno").val())+
+	      "&heslo1="+encodeURIComponent($(".heslo1").val())+
+	      "&heslo2="+encodeURIComponent($(".heslo2").val()),	
+	success: function(html){$(".center-content").html(html);}       
+    });
+  });
+});

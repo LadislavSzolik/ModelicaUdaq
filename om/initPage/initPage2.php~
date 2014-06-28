@@ -1,0 +1,41 @@
+<?php
+
+
+languages(array('26','12','13','14','16','33','36','61','80','82','83','89','121','124','125'));
+	if(isset($_SESSION['show'])) unset($_SESSION['show']);
+	if(isset($_SESSION['addNew'])) unset($_SESSION['addNew']);
+	if(isset($_SESSION['usedController'])) unset($_SESSION['usedController']);
+	$userDefArr = array();
+	$defaultArr = array();
+
+	if(isset($_SESSION['user'])) {
+		if(isset($_GET['default'])) {
+			$tempCont = new Controller();
+			if(isset($_GET['delete'])) $tempCont->getControllerById($_GET['delete']);
+			if($_GET['default'] == '0' ) {
+				if(isset($_GET['delete']) && $_SESSION['user']->permission < 2 ) $tempCont->deleteController();
+			}else if($_GET['default'] == '1'){
+				if(isset($_GET['delete'])) {
+					if($_SESSION['user']->permission < 2) {
+						$tempCont->deleteController();
+					}else {
+						$tempCont->deleteControllerByUser();
+					}
+
+				}
+			}
+		}
+	}
+	if(isset($_SESSION['user']) && ($_SESSION['user']->permission >1) ) {
+		$userDefArr = getAllControllerByUser($_SESSION['user']->login);
+	}else if(isset($_SESSION['user']) && ($_SESSION['user']->permission < 2)) {
+		$userDefArr = getAllControllerByType(1);
+	}
+
+	if($userDefArr != -1) $smarty->assign('userDefArr',$userDefArr);
+	$defaultArr = getAllControllerByType(0);
+	if($defaultArr != -1) $smarty->assign('defaultArr',$defaultArr);
+
+	$smarty->display('controller_list.tpl');
+
+?>

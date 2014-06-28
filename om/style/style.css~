@@ -1,0 +1,238 @@
+body {
+	margin:0px 0px; 
+	padding:0px;
+	font-family:Arial,'DejaVu Sans','Liberation Sans',Freesans,sans-serif;
+	background-color:#eff2f3;
+}
+legend {
+	color:black;
+	 font: italic 100%/1.0 Georgia, serif;
+}
+
+.regList a, .userClass a, .updateUser, .createUser, .reportClass a {	
+	font: italic 100%/1.0 Georgia, serif;
+	border:0;
+}
+.regList a:link, .userClass a:link, .reportClass a:link { 
+	color: #000000;
+	text-decoration:none;
+	border:0;
+}
+.regList a:visited, .userClass a:visited, .reportClass a:visited {
+	color: #000000;
+	text-decoration:none;
+	border:0;
+}
+.regList a:hover, .userClass a:hover, .reportClass a:hover {
+	border:0;
+	
+	text-decoration:underline;
+}
+.regList a:active, .userClass a:active, .reportClass a:active{ 
+	border:0;
+	color: #000000;
+	text-decoration:underline;
+}
+/********************************************************************/
+.userListClass a {	
+	font: italic 100%/1.0 Georgia, serif;
+	border:0;
+}
+.userListClass a:link  { 
+	color: #000000;
+	text-decoration:none;
+	border:0;
+}
+.userListClass a:visited {
+	color: #000000;
+	text-decoration:none;
+	border:0;
+}
+.userListClass a:hover {
+	border:0;
+	
+	text-decoration:underline;
+}
+.userListClass a:active { 
+	border:0;
+	color: #000000;
+	text-decoration:underline;
+}
+/********************************************************************/
+.loadedCont a {
+	color: #000000;
+	text-decoration:none;
+}
+.loadedCont a:link {
+	color: #000000;
+	text-decoration:none;
+}
+.loadedCont a:visited {
+	color: #000000;
+	text-decoration:none;
+}
+.loadedCont a:hover {
+	color: #000000;
+	text-decoration:none;
+}
+.loadedCont a:active {
+	color: #000000;
+	text-decoration:none;
+}
+/********************************************************************/
+.simModel a {
+	color: #000000;
+	text-decoration:none;
+}
+.simModel a:link {
+	color: #000000;
+	text-decoration:none;
+}
+.simModel a:visited {
+	color: #000000;
+	text-decoration:none;
+}
+.simModel a:hover {
+	color: #000000;
+	text-decoration:none;
+}
+.simModel a:active {
+	color: #000000;
+	text-decoration:none;
+}
+img {border-style: none;}
+
+#wait_loading{
+	display:none;
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	background-image: url(../pic/ajax-loader.gif);
+	background-color: white;
+	background-repeat:no-repeat;
+	background-position: center;
+	z-index:0;
+	opacity:0.4;
+	/*filter:alpha(opacity=30);*/
+}
+.langClass {
+	border-width:10px;
+}
+.header {
+   position: relative;
+   width:820px;
+   height:202px;
+   margin-top:10px;
+   margin-bottom: -45px;
+   margin-left: auto;
+   margin-right: auto;
+   background: url('../pic/header.png') no-repeat top;
+}
+.domov {
+ width:400px;
+ height:468px;
+ margin:auto;
+ background: url('../pic/under-construction-icon.jpg') no-repeat top;
+}
+.navigation {
+	text-align:center;
+  position: relative;
+  height: 50px;
+  width: 100%;
+  background: url('../pic/panel.png') repeat-x top; 
+  padding-top: 20px;
+  margin:0px auto;
+  margin-top:35px;
+  
+}
+.navigation a  {padding-left:5px; padding-right:5px;text-decoration:none; font-weight:bold; color:navy}
+.navigation label {padding-left:5px; padding-right:5px;font-weight:bold;}
+.navigation a:hover {text-decoration:underline;}
+
+
+/*********************************content***************************************/
+#liquid-round {
+	width:810px;
+	
+	margin:0px auto;
+	background: #fff url(../pic/leftside.gif) repeat-y left top;
+}
+.top {
+	width:100%;
+	height:20px;
+	background:url(../pic/top.gif) no-repeat left top;
+}
+.top span {
+	display:block;
+	position:relative;
+	height:20px;
+	background:url(../pic/top-right.gif) no-repeat right top;
+}
+.center-content {	
+	position:relative;
+	background:url(../pic/rightside.gif) repeat-y right top;
+	padding:1px 20px 1px 25px;
+	margin:-1px 0 -50px 0;
+}
+.bottom {height:60px;background:url(../pic/bottom.gif) no-repeat left bottom;}
+.bottom span {display:block;position:relative;height:60px;background:url(../pic/bottom-right.gif) no-repeat right top;}
+/*********************************footer***************************************/
+.footer {text-align:center;}
+
+legend { font-weight:bold;}
+.RegOptTable {text-align:center;width:100%;}
+/************.paramVarTable {verctical-align:top;}*********************nastavenie regulatorov***************************************/
+
+.footer_nav button {margin:10px; padding:10px;}
+/*********************************login***************************************/
+.loginContent {width:100%;}
+.goodLogin {margin:auto auto;width:64px; height:64px; background:url(../pic/fajka.png) no-repeat;}
+.loginFigure{width:64px; height:64px; background:url(../pic/userIcon.png) no-repeat; margin-left:80px}
+
+
+/*********************************Register***************************************/
+.registerContent {width:98%; margin:1%;}
+.regiterTable {text-align:left; margin-left:auto; margin-right:auto; width:600px; }
+.regiterTable td {padding-left:20px; }
+.loginSettingsIcon { width:64px; height:64px;  background:url(../pic/nastaveniaIcon.png) no-repeat;}
+.goodReg {margin:auto auto;width:64px; height:64px; background:url(../pic/ulozenieIcon.png) no-repeat;}
+/*********************************login***************************************/
+.logoutIcon {margin:auto auto;width:64px; height:64px; background:url(../pic/exit.png) no-repeat;}
+
+.runExp, .clearModel, .saveModel, .predvolba {
+	cursor:pointer;
+	cursor:hand;
+}
+
+
+p.description {
+		font-size: 0.8em;
+		padding: 1em;
+		position: absolute;
+		top: 3.2em;
+		margin-right: 400px;
+	}
+	
+	#calendar_selection {
+		font-size: 0.7em;
+		position: absolute;
+		top: 1em; 
+		right: 1em;
+		padding: 1em;
+		background: #ffc;
+		border: 1px solid #dda;
+		width: 270px;
+	}
+	
+	#message {
+		font-size: 0.7em;
+		position: absolute;
+		top: 1em; 
+		right: 320px;
+		padding: 1em;
+		background: #ddf;
+		border: 1px solid #aad;
+		width: 270px;
+	}

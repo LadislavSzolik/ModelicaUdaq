@@ -1,0 +1,86 @@
+$(document).ready(function(){
+/*********** arrayGenerator ***********/
+	var sarray1 = new Array();
+	var sarray2 = new Array();
+	function arrayGenerator(arrHolder1,arrHolder2,arrHolder3) {
+
+		arrHolder1 = arrHolder1.replace("[","");
+		arrHolder1 = arrHolder1.replace(']',"");
+		arrHolder1 = arrHolder1.replace(/'/g,"");
+		arrHolder1 = arrHolder1.split(",");
+
+		arrHolder2 = arrHolder2.replace('[',"");
+		arrHolder2 = arrHolder2.replace(']',"");
+		arrHolder2 = arrHolder2.replace(/'/g,"");	
+		arrHolder2 = arrHolder2.split(",");
+		
+		arrHolder3 = arrHolder3.replace('[',"");
+		arrHolder3 = arrHolder3.replace(']',"");
+		arrHolder3 = arrHolder3.replace(/'/g,"");	
+		arrHolder3 = arrHolder3.split(",");
+		
+		if(arrHolder1.length > 1) {
+			for(i=0;i<arrHolder1.length;i++)
+			{
+				sarray1.push([arrHolder1[i],arrHolder2[i]]);
+				sarray2.push([arrHolder1[i],arrHolder3[i]]);
+			}
+		}else if(arrHolde1r.length == 0){
+			sarray1 = new Array();
+			sarray2 = new Array();
+
+		}
+		
+	}
+/***********  ***********/
+
+	arrayGenerator($('.resultTime').val(),$('.resultT').val(),$('.resultI').val());
+
+	$.plot($("#placeholder1"), [{label:"temp", data:sarray1}, {label:"int", data:sarray2}], 
+				 {
+            grid: {
+                backgroundColor: { colors: ["#fff", "#eee"]},   
+                canvasText: {show: true, font: "sans 9px"}         
+            },
+        }
+	);
+	$('.export').click(function(){
+		var adr = "export.php?reportId="+$('.reportId').val();
+		if (typeof browserEval != 'undefined') {
+			browserEval(adr);
+		}
+		else
+		{
+			location.href="export.php";
+		}
+	});
+
+	$('.downXml').click(function(){
+		var adr = "exportXml.php?reportId="+$('.reportId').val();
+		if (typeof browserEval != 'undefined') 
+			browserEval(adr);
+		else
+			location.href=adr;
+	});
+	$('.downJson').click(function(){
+		var adr = "exportJson.php?reportId="+$('.reportId').val();
+		if (typeof browserEval != 'undefined') 
+			browserEval(adr);
+		else
+			location.href=adr;
+	});
+	$('.downPng').click(function(){
+		var divobj = document.getElementById("placeholder1");
+        Canvas2Image.saveAsPNG(divobj.childNodes[0], false);
+	});
+
+	$('.usedC').click(function(){
+		
+		$('.akutalC').val($('.usedCholder').val());
+		
+	});
+	$('.defUsedC').click(function(){
+		$('.akutalC').val($('.defUsedCholder').val());
+		
+	});
+});

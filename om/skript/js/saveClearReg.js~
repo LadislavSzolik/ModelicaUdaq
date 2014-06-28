@@ -1,0 +1,55 @@
+$(document).ready(function(){
+	$('.clearModel').click(function(){
+		 var dataT = '';		
+		dataT += 'ID='+encodeURIComponent($('.typR').val());
+		$.ajax({
+    	type: "POST",
+		url: "save_clear_model.php",
+    	data: dataT,
+    	success:
+			function(html){				
+				window.location.reload();
+    			$(".typR").html(html);
+    		}
+    	});
+	});
+
+  $('.saveModel').click(function(){
+    var tempArr = $('.par_arr').val().split(",");
+    var tempArr2 = $('.var_arr').val().split(",");
+    var aktualPar = new Array();
+    var aktualVar = new Array();
+    for(i=0;i<tempArr.length;i++)
+    {
+      aktualPar.push(parseInt(tempArr[i]));
+
+    }
+
+    for(i=0;i<tempArr2.length;i++)
+    {
+      aktualVar.push(parseInt(tempArr2[i]));
+    }
+    var dataT = '';
+	dataT += 'saving=true';
+    dataT += '&nazovReg='+encodeURIComponent($("#nazovReg").val());
+    dataT += '&equation='+encodeURIComponent($(".rovnice").val());
+    dataT += '&parameter=';
+    for(i=0;i<aktualPar.length;i++)
+    {
+      dataT += $('.parTypTd'+aktualPar[i]+' > .TypParam option:selected').val()+'-'+$('.parN'+aktualPar[i]).val()+'-'+$('.parV'+aktualPar[i]).val()+';';
+    }
+    dataT += '&variable=';
+    for(i=0;i<aktualVar.length;i++)
+    {
+      dataT += $('.varTypTd'+aktualVar[i]+' > .TypParam option:selected').val() +'-'+$('.varN'+aktualVar[i]).val()+";";
+    }
+    $.ajax({
+    	type: "POST",
+		url: "save_clear_model.php",
+    	data: dataT,
+    	success:
+			function(html){$(".typR").html(html);}
+    });
+  })
+
+});

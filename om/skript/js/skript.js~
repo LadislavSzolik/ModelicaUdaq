@@ -1,0 +1,13 @@
+$(document).ready(function(){ 
+  $('.loginBtn').click(function() {
+    $.ajax({
+	type: "GET",
+	url: "login.php",		
+	data: "pouMeno="+encodeURIComponent($("pouMeno").val())+
+	      "&heslo="+encodeURIComponent($("heslo").val()),	
+	success: function(html){$(".center-content").html(html);}      
+    });	
+  });
+  /*
+  */
+});

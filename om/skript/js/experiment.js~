@@ -1,0 +1,139 @@
+var grafdata = new Array();
+var oG = {lines: { show: true }, grid: { backgroundColor: { colors: ["#fff", "#eee"] }}};
+var gD1 = new Array();
+var gD2 = new Array();
+var gD3 = new Array();
+var gD4 = new Array();
+var gD5 = new Array();
+var gD6 = new Array();
+var gD7 = new Array();
+var sampleTime = 0.1;
+var playing = false;
+var finalGrafData1 = new Array();
+var finalGrafData2 = new Array();
+var finalGrafData3 = new Array();
+var finalGrafData4 = new Array();
+var finalGrafData5 = new Array();
+var finalGrafData6 = new Array();
+var finalGrafData7 = new Array();
+var finalOptGraf = {lines: { show: true }, grid: { backgroundColor: { colors: ["#fff", "#eee"] }}};
+
+function grafChange() {
+	grafdata.empty();
+	if($(".checkGraf1").attr('checked')){grafdata.push({label: 'temp', data:gD1 })};
+	if($(".checkGraf2").attr('checked')){grafdata.push({label: 'ftemp',data:gD2 })};
+	if($(".checkGraf3").attr('checked')){grafdata.push({label: 'light',data:gD3})};
+	if($(".checkGraf4").attr('checked')){grafdata.push({label: 'flight',data:gD4 })};
+	if($(".checkGraf5").attr('checked')){grafdata.push({label: 'fan_out',data:gD5})};
+	if($(".checkGraf6").attr('checked')){grafdata.push({label: 'RPM', data:gD6})};
+	if($(".checkGraf7").attr('checked')){grafdata.push({label: 'input',data:gD7 })};
+	$.plot($(".placeholder1"), grafdata, oG);
+}
+$(document).ready(function(){
+	var options = {lines: { show: true } , grid: { backgroundColor: { colors: ["#fff", "#eee"] }}};
+	$.plot($(".placeholder1"), [], options);
+
+	function drawGraph() {
+		playing = true;
+		var placeholder1 = $(".placeholder1");
+		$.plot(placeholder1, [], {lines: { show: true }, grid: { backgroundColor: { colors: ["#fff", "#eee"] }}});
+	    function fetchData() {
+		        function onDataReceived(series) {
+					try {
+						if(typeof(ok) != 'undefined') {
+							if(ok == true) {
+								gD1 = graf1Data;
+								gD2 = graf2Data;
+								gD3 = graf3Data;
+								gD4 = graf4Data;
+								gD5 = graf5Data;
+								gD6 = graf6Data;
+								gD7 = graf7Data;
+
+								grafdata.empty();
+								if($(".checkGraf1").attr('checked')){grafdata.push({label: 'temp', data:gD1 })};
+								if($(".checkGraf2").attr('checked')){grafdata.push({label: 'ftemp',data:gD2 })};
+								if($(".checkGraf3").attr('checked')){grafdata.push({label: 'light',data:gD3 })};
+								if($(".checkGraf4").attr('checked')){grafdata.push({label: 'flight',data:gD4 })};
+								if($(".checkGraf5").attr('checked')){grafdata.push({label: 'fan_out',data:gD5})};
+								if($(".checkGraf6").attr('checked')){grafdata.push({label: 'RPM',data:gD6 })};
+								if($(".checkGraf7").attr('checked')){grafdata.push({label: 'input',data:gD7 })};
+								oG = optGraf;
+								if (playing == true) {
+									$.plot($(".placeholder1"), grafdata, optGraf);
+								}
+							}
+						}
+					}catch(err){}
+		        }
+		        $.ajax({
+					url: "skript/python/getData.py",
+		            method: 'GET',
+					cache: false,
+		            dataType: 'script',
+		            success: onDataReceived
+		        });
+				if (playing == true ) {
+		        	setTimeout(fetchData, sampleTime);
+				}
+		    }
+		    setTimeout(fetchData, sampleTime);
+		}
+
+	$("button.start").click(function(){
+		sampleTime = parseFloat($(".sample").val());
+		$("#wait_loading").css("display","block");
+		gD1 = new Array();
+		gD2 = new Array();
+		gD3 = new Array();
+		gD4 = new Array();
+		gD5 = new Array();
+		gD6 = new Array();
+		gD7 = new Array();
+		grafChange();
+		var dataT= "fun="+encodeURIComponent($("#fun").val())+"&led="+encodeURIComponent($("#led").val())+"&sample="+encodeURIComponent($(".sample").val());
+			dataT += "&nickname="+encodeURIComponent($(".nickname").val());
+			dataT += "&controllerID="+encodeURIComponent($(".controllerID").val());
+			dataT += "&user_id="+encodeURIComponent($(".user_id").val());
+			dataT += "&nazovReg="+encodeURIComponent($(".nazovReg").val());
+			dataT += "&lang="+encodeURIComponent($(".lang").val());
+			dataT += "&timeLimit="+encodeURIComponent($(".timeLimit").val());
+			dataT += "&vlastReg="+encodeURIComponent($(".vlastR").val());
+
+		$.ajax({
+			type: "POST",
+			url: "skript/python/spustiUdaq.py",
+			data: dataT,
+			success:
+				function(html){
+					drawGraph();
+					$(".result").html(html);
+				},
+			error:
+				function (xhr, ajaxOptions, thrownError){
+                    alert("Error: "+xhr.status+" "+thrownError);
+                },
+			complete:
+				function(jqXHR, textStatus) {
+				$("#wait_loading").css("display","none");
+			}
+		});
+	});
+
+	$("button.stop").click(function(){
+		$.ajax({
+			type: "POST",
+			url: "skript/python/zastavitUdaq.py",
+			success: function(html) {
+				grafChange();
+				playing = false;
+			},
+			error:
+				function (xhr, ajaxOptions, thrownError){
+                    alert("Error: "+xhr.status+" "+thrownError);
+            }
+		});
+	});
+
+	
+});
